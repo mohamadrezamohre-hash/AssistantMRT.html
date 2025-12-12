@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دستیار MRT - شبیه‌سازی نهایی</title>
+    <title>دستیار MRT - نهایی</title>
     <style>
-        body { font-family: Tahoma, sans-serif; margin: 20px; background-color: #e6e6e6; color: #333; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        h2 { text-align: center; color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; }
+        body { font-family: Tahoma, sans-serif; margin: 20px; background-color: #f0f4f7; color: #333; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #004d99; border-bottom: 3px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;}
         input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 12px; background-color: #009933; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; transition: background-color 0.3s; }
+        button { width: 100%; padding: 12px; background-color: #009933; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; transition: background-color 0.3s; }
         button:hover { background-color: #007a29; }
         #result { margin-top: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
-        .step { margin-bottom: 15px; padding: 10px; border-left: 5px solid #ff9900; background-color: #fff3e0; }
-        .ai-response { border: 2px dashed #004d99; padding: 15px; margin-top: 15px; background-color: #e0f2ff; }
+        .step { margin-bottom: 15px; padding: 12px; border-right: 5px solid #ff9900; background-color: #fff3e0; border-radius: 6px; }
+        .ai-response { border: 2px dashed #004d99; padding: 15px; margin-top: 15px; background-color: #e0f2ff; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -40,7 +40,7 @@
 </div>
 
 <script>
-    // شبیه سازی دیتابیس (فقط کدهای رایج شما)
+    // 1. شبیه سازی دیتابیس محلی (اطلاعات شما)
     const localDatabase = [
         { 
             Brand: "Konica Minolta", 
@@ -62,12 +62,11 @@
         }
     ];
 
-    // این تابع شبیه سازی می کند که هوش مصنوعی به شما جواب می دهد
+    // 2. شبیه سازی پاسخ هوش مصنوعی (من)
     function simulateAIResponse(brand, errorCode) {
         if (brand === "Canon" && errorCode === "E0007") {
             return {
                 found: true,
-                isAI: true,
                 AIText: 'خطای E0007 در دستگاه‌های Canon (مانند imageRUNNER ADVANCE) نشان‌دهنده نقص در گرمایش المنت فیوزینگ است. این خطا اغلب به دلایل زیر رخ می‌دهد: 1. خرابی ترمیستور اصلی یا جانبی. 2. سوختن المنت حرارتی. 3. خرابی برد کنترل فیوزینگ.'
             };
         }
@@ -80,11 +79,11 @@
         const resultDiv = document.getElementById('result');
         
         if (!brand || !errorCode) {
-            resultDiv.innerHTML = '<h4 style="color: red;">لطفاً برند و کد خطا را وارد کنید.</h4>';
+            resultDiv.innerHTML = '<h4 style="color: red; text-align: center;">⚠️ لطفاً برند و کد خطا را وارد کنید.</h4>';
             return;
         }
 
-        // 1. جستجو در دیتابیس محلی (اطلاعات سریع شما)
+        // 1. جستجو در دیتابیس محلی
         const localFound = localDatabase.find(item => 
             item.Brand === brand && item.ErrorCode === errorCode
         );
@@ -101,7 +100,7 @@
                 htmlContent += `
                     <div class="step">
                         <p><strong>گام ${index + 1}:</strong> ${step.text}</p>
-                        <p>💡 **راهنمای بصری:** [در اینجا **تصویر ${index + 1}** نمایش داده می‌شود.]</p>
+                        <p>💡 **راهنمای بصری:** [تصویر ${index + 1} نمایش داده می‌شود.]</p>
                     </div>
                 `;
             });
@@ -115,11 +114,11 @@
                 // اگر هوش مصنوعی پاسخ داد
                 let aiHtml = `
                     <h4>🔍 در دیتابیس محلی یافت نشد.</h4>
-                    <p>در حال جستجو از هوش مصنوعی آنلاین...</p>
+                    <p style="text-align: center;">در حال جستجو از هوش مصنوعی آنلاین...</p>
                     <div class="ai-response">
                         <h5>🤖 پاسخ هوش مصنوعی برای ${brand} ${errorCode}:</h5>
                         <p>${aiResult.AIText}</p>
-                        <p>⚡️ **نکته:** در صورت نیاز به تصویر، می‌توانید از هوش مصنوعی (من) درخواست کنید.</p>
+                        <p style="font-weight: bold;">⚡️ **نکته:** در صورت نیاز به تصویر تخصصی، لطفاً آن را از من (همینجا) درخواست کنید.</p>
                     </div>
                 `;
                 resultDiv.innerHTML = aiHtml;
@@ -127,8 +126,8 @@
             } else {
                 // اگر هیچ کدام جواب ندادند
                 resultDiv.innerHTML = `
-                    <h4>❌ نتیجه‌ای یافت نشد.</h4>
-                    <p>نه در دیتابیس محلی و نه در هوش مصنوعی آنلاین، اطلاعاتی برای ${brand} ${errorCode} وجود ندارد.</p>
+                    <h4 style="color: red; text-align: center;">❌ نتیجه‌ای برای ${brand} ${errorCode} یافت نشد.</h4>
+                    <p style="text-align: center;">این مورد را به دیتابیس خود اضافه کنید یا اطلاعات را چک کنید.</p>
                 `;
             }
         }
