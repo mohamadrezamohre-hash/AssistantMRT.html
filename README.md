@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار MRT - نهایی</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; margin: 20px; background-color: #f0f4f7; color: #333; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #004d99; border-bottom: 3px solid #004d99; padding-bottom: 10px; margin-bottom: 20px;}
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #009933; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; transition: background-color 0.3s; }
+        button:hover { background-color: #007a29; }
+        #result { margin-top: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        .step { margin-bottom: 15px; padding: 12px; border-right: 5px solid #ff9900; background-color: #fff3e0; border-radius: 6px; }
+        .ai-response { border: 2px dashed #004d99; padding: 15px; margin-top: 15px; background-color: #e0f2ff; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🛠️ دستیار هوشمند تعمیرات MRT</h2>
+    
+    <label for="brandSelect">برند دستگاه:</label>
+    <select id="brandSelect">
+        <option value="">-- انتخاب برند --</option>
+        <option value="Konica Minolta">Konica Minolta</option>
+        <option value="Ricoh">Ricoh</option>
+        <option value="Canon">Canon</option>
+    </select>
+
+    <label for="errorCodeInput">کد خطا (مثال: C4471 یا E0007):</label>
+    <input type="text" id="errorCodeInput" placeholder="کد خطا را وارد کنید">
+    
+    <button onclick="searchAssistant()">جستجو و دریافت راهنمایی</button>
+    
+    <div id="result">
+        **نتیجه جستجو و راهنمایی گام به گام اینجا نمایش داده خواهد شد.**
+    </div>
+</div>
+
+<script>
+    // 1. شبیه سازی دیتابیس محلی (اطلاعات شما)
+    const localDatabase = [
+        { 
+            Brand: "Konica Minolta", 
+            ErrorCode: "C4471", 
+            ShortDesc: "خطای دمای پایین فیوزینگ (ترمیستور)",
+            Steps: [
+                { text: "دستگاه را خاموش و یونیت فیوزینگ را از پشت باز کنید.", image: "تصویر 1: محل فیوزینگ KM" },
+                { text: "ترمیستورها را از نظر اتصال صحیح و کثیفی بررسی کنید.", image: "تصویر 2: نمای نزدیک ترمیستور KM" },
+            ]
+        },
+        { 
+            Brand: "Ricoh", 
+            ErrorCode: "SC542", 
+            ShortDesc: "خطای دمای بالای فیوزینگ (Overheat)",
+            Steps: [
+                { text: "اجازه دهید دستگاه خنک شود. سپس ترمیستور را چک کنید که آیا به غلطک چسبیده یا خیر.", image: "تصویر 1: بررسی ترمیستور Ricoh" },
+                { text: "فیوز حرارتی را تست کنید. ممکن است فیوز سوخته باشد.", image: "تصویر 2: محل فیوز حرارتی Ricoh" },
+            ]
+        }
+    ];
+
+    // 2. شبیه سازی پاسخ هوش مصنوعی (من)
+    function simulateAIResponse(brand, errorCode) {
+        if (brand === "Canon" && errorCode === "E0007") {
+            return {
+                found: true,
+                AIText: 'خطای E0007 در دستگاه‌های Canon (مانند imageRUNNER ADVANCE) نشان‌دهنده نقص در گرمایش المنت فیوزینگ است. این خطا اغلب به دلایل زیر رخ می‌دهد: 1. خرابی ترمیستور اصلی یا جانبی. 2. سوختن المنت حرارتی. 3. خرابی برد کنترل فیوزینگ.'
+            };
+        }
+        return { found: false };
+    }
+
+    function searchAssistant() {
+        const brand = document.getElementById('brandSelect').value;
+        const errorCode = document.getElementById('errorCodeInput').value.toUpperCase().trim();
+        const resultDiv = document.getElementById('result');
+        
+        if (!brand || !errorCode) {
+            resultDiv.innerHTML = '<h4 style="color: red; text-align: center;">⚠️ لطفاً برند و کد خطا را وارد کنید.</h4>';
+            return;
+        }
+
+        // 1. جستجو در دیتابیس محلی
+        const localFound = localDatabase.find(item => 
+            item.Brand === brand && item.ErrorCode === errorCode
+        );
+
+        if (localFound) {
+            // اگر در دیتابیس محلی پیدا شد
+            let htmlContent = `
+                <h4>✅ نتیجه از دیتابیس محلی شما (${localFound.Brand})</h4>
+                <p><strong>شرح:</strong> ${localFound.ShortDesc}</p>
+                <hr>
+                <h5>راهنمای گام به گام:</h5>
+            `;
+            localFound.Steps.forEach((step, index) => {
+                htmlContent += `
+                    <div class="step">
+                        <p><strong>گام ${index + 1}:</strong> ${step.text}</p>
+                        <p>💡 **راهنمای بصری:** [تصویر ${index + 1} نمایش داده می‌شود.]</p>
+                    </div>
+                `;
+            });
+            resultDiv.innerHTML = htmlContent;
+
+        } else {
+            // 2. اگر در دیتابیس محلی پیدا نشد، شبیه سازی جستجو از هوش مصنوعی
+            const aiResult = simulateAIResponse(brand, errorCode);
+
+            if (aiResult.found) {
+                // اگر هوش مصنوعی پاسخ داد
+                let aiHtml = `
+                    <h4>🔍 در دیتابیس محلی یافت نشد.</h4>
+                    <p style="text-align: center;">در حال جستجو از هوش مصنوعی آنلاین...</p>
+                    <div class="ai-response">
+                        <h5>🤖 پاسخ هوش مصنوعی برای ${brand} ${errorCode}:</h5>
+                        <p>${aiResult.AIText}</p>
+                        <p style="font-weight: bold;">⚡️ **نکته:** در صورت نیاز به تصویر تخصصی، لطفاً آن را از من (همینجا) درخواست کنید.</p>
+                    </div>
+                `;
+                resultDiv.innerHTML = aiHtml;
+
+            } else {
+                // اگر هیچ کدام جواب ندادند
+                resultDiv.innerHTML = `
+                    <h4 style="color: red; text-align: center;">❌ نتیجه‌ای برای ${brand} ${errorCode} یافت نشد.</h4>
+                    <p style="text-align: center;">این مورد را به دیتابیس خود اضافه کنید یا اطلاعات را چک کنید.</p>
+                `;
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
